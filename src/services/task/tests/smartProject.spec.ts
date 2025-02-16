@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest'
+import { expect, it } from "vitest";
 // import { initListProjects } from '../listProject'
 // import {
 //   completedSmartProject,
@@ -85,6 +85,6 @@ import { expect, it } from 'vitest'
 //   })
 // })
 
-it('smartProject ', () => {
-  expect(true).toBe(true)
-})
+it.skip("smartProject ", () => {
+  expect(true).toBe(true);
+});
