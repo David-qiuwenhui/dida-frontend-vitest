@@ -1,27 +1,33 @@
 <script setup lang="ts">
-import { NEmpty, NScrollbar } from 'naive-ui'
-import SearchItem from './SearchItem.vue'
-import { useSearchStore } from '@/store'
+import { NEmpty, NScrollbar } from "naive-ui";
+import SearchItem from "./SearchItem.vue";
+import { useSearchStore } from "@/store";
 
-const searchStore = useSearchStore()
+const searchStore = useSearchStore();
 const handleSearch = async (input: string) => {
-  searchStore.handleSearch(input)
-  return Promise.resolve()
-}
+  searchStore.handleSearch(input);
+  return Promise.resolve();
+};
 
+// 暴露方法：搜索和清空搜索结果
 defineExpose({
   handleSearch,
   clear() {
-    searchStore.clear()
+    searchStore.clear();
   },
-})
+});
 </script>
 
 <template>
   <div class="flex flex-col gap-15px max-h-400px overflow-auto">
     <NScrollbar style="max-height: 400px" trigger="none">
-      <SearchItem v-for="item in searchStore.searchTasks" :key="item.item.id" v-bind="item.item" />
+      <SearchItem
+        v-for="item in searchStore.searchTasks"
+        :key="item.item.id"
+        v-bind="item.item"
+      />
     </NScrollbar>
+    <!-- 空状态 -->
     <NEmpty v-show="!searchStore.searchTasks.length" description="没有找到哦" />
   </div>
 </template>

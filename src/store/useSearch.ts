@@ -1,28 +1,34 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import Fuse from 'fuse.js'
-import { TaskState, loadAllTasksNotRemoved } from 'services/task'
-import type { Project } from 'services/task'
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import Fuse from "fuse.js";
+import { TaskState, loadAllTasksNotRemoved } from "services/task";
+import type { Project } from "services/task";
 
+/**
+ * 搜索任务项
+ */
 interface SearchTaskItem {
-  id: number
-  title: string
-  desc: string
-  done: boolean
-  from: Project | undefined
+  id: number;
+  title: string;
+  desc: string;
+  done: boolean;
+  from: Project | undefined;
 }
 
-export const useSearchStore = defineStore('searchStore', () => {
-  const allTasks = ref<SearchTaskItem[]>([])
-
-  const searchTasks = ref<Fuse.FuseResult<SearchTaskItem>[]>([])
+/**
+ * 搜索任务存储
+ */
+export const useSearchStore = defineStore("searchStore", () => {
+  const allTasks = ref<SearchTaskItem[]>([]);
+  const searchTasks = ref<Fuse.FuseResult<SearchTaskItem>[]>([]);
 
   const fuse = new Fuse(allTasks.value, {
-    keys: ['title', 'desc'],
-  })
+    keys: ["title", "desc"],
+  });
 
+  // 收集所有任务
   function collectAllTasks() {
-    allTasks.value = []
+    allTasks.value = [];
     return loadAllTasksNotRemoved().then((tasks) => {
       tasks.forEach((task) => {
         allTasks.value.push({
@@ -31,24 +37,26 @@ export const useSearchStore = defineStore('searchStore', () => {
           desc: task.content,
           done: task.state === TaskState.COMPLETED,
           from: task.project,
-        })
-      })
-      fuse.setCollection(allTasks.value)
-    })
+        });
+      });
+      fuse.setCollection(allTasks.value);
+    });
   }
 
+  // 处理搜索
   const handleSearch = async (input: string) => {
-    await collectAllTasks()
-    searchTasks.value = fuse.search(input)
-  }
+    await collectAllTasks();
+    searchTasks.value = fuse.search(input);
+  };
 
+  // 清空搜索结果
   const clear = () => {
-    searchTasks.value = []
-  }
+    searchTasks.value = [];
+  };
 
   return {
     searchTasks,
     handleSearch,
     clear,
-  }
-})
+  };
+});
