@@ -21,7 +21,9 @@ describe("The Header", () => {
     router.reset();
     injectRouterMock(router);
   });
+
   it("should be go to home page", () => {
+    // 空渲染函数：用于测试组件逻辑而不涉及UI渲染
     const Comp = {
       render() {},
       setup() {
@@ -29,12 +31,13 @@ describe("The Header", () => {
         goToHome();
       },
     };
+    // 挂载组件，触发 setup 函数
     const wrapper = mount(Comp);
 
     expect(wrapper.router.push).toBeCalledWith({ name: "Home" });
   });
 
-  it.todo("should be go to setting page", () => {
+  it("should be go to setting page", () => {
     const Comp = {
       render() {},
       setup() {
@@ -44,8 +47,6 @@ describe("The Header", () => {
     };
     const wrapper = mount(Comp);
 
-    // FIXME: 此处应该报错，因为实际没有进行reset
-    expect(wrapper.router.push).toBeCalledWith({ name: "Home" });
-    // expect(wrapper.router.push).toBeCalledWith({ name: "Settings" });
+    expect(wrapper.router.push).toBeCalledWith({ name: "Settings" });
   });
 });

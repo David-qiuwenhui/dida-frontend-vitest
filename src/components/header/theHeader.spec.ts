@@ -12,8 +12,8 @@ vi.mocked(useRouter as () => { push: Function }).mockImplementation(() => {
 });
 
 describe("The Header", () => {
+  // 清空 pushFn 的 mock 缓存
   beforeEach(() => {
-    // 清空 pushFn 的 mock 缓存
     pushFn.mockClear();
   });
 
