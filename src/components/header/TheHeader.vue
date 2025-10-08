@@ -9,7 +9,7 @@
       <button class="mx-2 !outline-none" @click="goToSetting">
         <div i="carbon-settings" />
       </button>
-      <button class="mx-2 !outline-none" @click="goToGithub">
+      <button class="mx-2 !outline-none" @click="openGithub">
         <div i="mdi-github" />
       </button>
     </div>
@@ -17,6 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import { useGoto } from "./theHeader";
-const { goToHome, goToSetting, goToGithub } = useGoto();
+import { useGoto } from "@/composable";
+import { openGithub } from "@/composable";
+
+const { goToHome, goToSetting } = useGoto();
 </script>

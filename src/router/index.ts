@@ -4,10 +4,11 @@ import type { App } from "vue";
 import { SettingsRoute } from "./settings";
 import Task from "@/pages/Task.vue";
 import { getDiscreteApi } from "@/composable/useNaiveDiscreteApi";
+import { RouteNames } from "./constant";
 
 export const routes: RouteRecordRaw[] = [
-  { path: "/", redirect: "/task", name: "Home" },
-  { path: "/task", component: Task, name: "Task" },
+  { path: "/", redirect: "/task", name: RouteNames.HOME },
+  { path: "/task", component: Task, name: RouteNames.TASK },
   SettingsRoute,
 ];
 
