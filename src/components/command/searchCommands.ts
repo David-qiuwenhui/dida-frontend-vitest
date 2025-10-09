@@ -11,9 +11,7 @@ const fuse = new Fuse([] as Command[], {
   keys: ["name"],
 });
 
-/**
- * 搜索命令
- */
+// 搜索命令
 export function useSearchCommands() {
   const { commands } = useCommand();
 
@@ -31,9 +29,7 @@ export function useSearchCommands() {
     filteredCommands.value = fuse.search(input).map((i) => i.item);
   }
 
-  /**
-   * 重置搜索命令
-   */
+  // 重置搜索命令
   function resetSearchCommands() {
     filteredCommands.value = commands;
   }

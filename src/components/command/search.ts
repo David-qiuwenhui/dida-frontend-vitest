@@ -10,6 +10,7 @@ const search = ref("");
 const loading = ref(false);
 const searching = ref(false);
 
+// 搜索组件是否已初始化
 let isInitialized = false;
 
 /**
@@ -19,39 +20,38 @@ export function useSearch() {
   const { resetSearchCommands, searchCommands } = useSearchCommands();
   const { resetSearchTasks, searchTasks } = useSearchTasks();
 
-  /**
-   * 初始化搜索组件
-   */
+  // 初始化搜索组件
   function init() {
-    if (!isInitialized) {
-      isInitialized = true;
-
-      // 监听搜索输入变化，当输入不为空时触发搜索
-      watchDebounced(
-        () => search.value,
-        async (newValue) => {
-          if (newValue) {
-            loading.value = true;
-            await handleSearch(newValue);
-            loading.value = false;
-            searching.value = true;
-          }
-        },
-        { debounce: 500 }
-      );
-
-      // 监听搜索输入变化，当输入为空时重置搜索结果
-      watch(
-        () => search.value,
-        (newValue) => {
-          if (newValue === "") {
-            resetSearch();
-            resetSearchCommands();
-            resetSearchTasks();
-          }
-        }
-      );
+    if (isInitialized) {
+      return;
     }
+
+    isInitialized = true;
+    // 监听搜索输入变化，当输入不为空时触发搜索
+    watchDebounced(
+      () => search.value,
+      async (newValue) => {
+        if (newValue) {
+          loading.value = true;
+          await handleSearch(newValue);
+          loading.value = false;
+          searching.value = true;
+        }
+      },
+      { debounce: 500 }
+    );
+
+    // 监听搜索输入变化，当输入为空时重置搜索结果
+    watch(
+      () => search.value,
+      (newValue) => {
+        if (newValue === "") {
+          resetSearch();
+          resetSearchCommands();
+          resetSearchTasks();
+        }
+      }
+    );
   }
 
   // 检查搜索输入是否为命令类型
@@ -59,7 +59,7 @@ export function useSearch() {
     return search.value.startsWith(">");
   });
 
-  //  重置搜索组件
+  // 重置搜索组件
   function resetSearch() {
     search.value = "";
     loading.value = false;

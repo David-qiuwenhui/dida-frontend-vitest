@@ -14,25 +14,22 @@ export interface Command {
  */
 let commands: Command[] = [];
 
+/**
+ * 命令模块
+ */
 export function useCommand() {
-  /**
-   * 初始化命令
-   */
+  //  初始化命令
   function initCommands() {
     commands.push(new CommandGoToHome());
     commands.push(new CommandGoToSettingsTheme());
   }
 
-  /**
-   * 重置命令
-   */
+  // 重置命令
   function resetCommand() {
     commands = [];
   }
 
-  /**
-   * 添加命令
-   */
+  // 添加命令
   function addCommand(command: Command) {
     commands.push(command);
   }
