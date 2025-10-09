@@ -5,8 +5,8 @@ import {
   completeSmartProject,
   useListProjectsStore,
   useTasksStore,
-} from "@/store";
-import type { TasksSelector } from "@/store";
+} from "@/storeNew";
+import type { TasksSelector } from "@/storeNew";
 
 interface SearchTaskItem {
   id: string;
