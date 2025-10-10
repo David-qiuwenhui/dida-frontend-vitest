@@ -12,15 +12,6 @@ import {
 import { generateTasks } from "@/tests/fixture";
 import { generateListProject } from "@/tests/fixture/listProject";
 
-// 先模拟所有依赖
-// vi.mock("../searchTasks", () => ({
-//   useSearchTasks: vi.fn().mockReturnValue({
-//     searchTasks: vi.fn(),
-//     filteredTasks: { value: [{ item: { id: "1", title: "mock task" } }] },
-//     resetSearchTasks: vi.fn(),
-//   }),
-// }));
-
 describe("search tasks", () => {
   beforeEach(() => {
     // 重置搜索任务
