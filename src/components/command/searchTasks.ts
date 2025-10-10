@@ -16,8 +16,11 @@ interface SearchTaskItem {
   from: TasksSelector | undefined;
 }
 
+// 过滤后的任务结果
 const filteredTasks = ref<Fuse.FuseResult<SearchTaskItem>[]>([]);
+// 初始化Fuse实例
 const fuse = new Fuse([] as SearchTaskItem[], {
+  // 搜索的字段
   keys: ["title", "desc"],
 });
 

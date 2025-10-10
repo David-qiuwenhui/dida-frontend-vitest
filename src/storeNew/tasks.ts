@@ -132,6 +132,10 @@ export const useTasksStore = defineStore("tasksStore", () => {
     task.position = newPosition;
   }
 
+  /**
+   * 查找所有未被删除的任务（包括活跃任务和已完成任务）
+   * @returns 未被删除的任务数组
+   */
   async function findAllTasksNotRemoved() {
     const activeTasks = await fetchAllTasks({ status: TaskStatus.ACTIVE });
     const completedTasks = await fetchAllTasks({
