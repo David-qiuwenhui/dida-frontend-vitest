@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useCommandModal } from "@/components/command/CommandModal";
+import { useCommandModal } from "@/components/command/commandModal";
 import { useSetup, fireEvent } from "@/tests/helpers";
 import * as useIsMac from "@/composable/useIsMac";
 import { computed } from "vue";

@@ -1,9 +1,7 @@
 import { useCommand } from "@/composable/command";
 import { it, expect, describe, beforeEach, beforeAll } from "vitest";
 import { useSearchCommands } from "../searchCommands";
-
-const TEST_COMMAND_HOME = "go to home";
-const TEST_COMMAND_SETTING = "go to setting";
+import { TEST_COMMAND_HOME, TEST_COMMAND_SETTING } from "@/tests/fixture";
 
 describe("search commands", () => {
   beforeEach(() => {
@@ -37,8 +35,6 @@ describe("search commands", () => {
   it("should be search all commands", () => {
     const { filteredCommands, searchCommands } = useSearchCommands();
     searchCommands("");
-
-    console.log(filteredCommands.value);
 
     expect(filteredCommands.value.length).toBe(2);
     expect(filteredCommands.value[0].name).toBe(TEST_COMMAND_HOME);
