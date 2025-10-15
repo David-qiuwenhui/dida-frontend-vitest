@@ -50,6 +50,8 @@ export const useTasksStore = defineStore("tasksStore", () => {
     const task = mapTaskResponseToTask(newRawTask);
     tasks.value.unshift(task);
     changeActiveTask(task);
+
+    return task;
   }
 
   function changeActiveTask(taskId: Task["id"]): void;

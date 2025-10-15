@@ -30,10 +30,11 @@ describe("useSearch", () => {
 
     await vi.runAllTimersAsync();
     // 还原测试间谍
-    searchTasks.mockClear();
-    resetSearchTasks.mockClear();
-    searchCommands.mockClear();
-    resetSearchCommands.mockClear();
+    vi.clearAllMocks();
+    // searchTasks.mockClear();
+    // resetSearchTasks.mockClear();
+    // searchCommands.mockClear();
+    // resetSearchCommands.mockClear();
   });
 
   // 测试ui状态
