@@ -1,7 +1,13 @@
 import { beforeEach, it, expect, describe, vi } from "vitest";
 import { TaskStatus, useTasksStore } from "../tasks";
 import { createPinia, setActivePinia } from "pinia";
-import { fetchCreateTask } from "@/api";
+import {
+  fetchCompleteTask,
+  fetchCreateTask,
+  fetchMoveTaskToProject,
+  fetchRemoveTask,
+  fetchRestoreTask,
+} from "@/api";
 import { generateListProject, generateSmartProject } from "@/tests/fixture";
 import { useTasksSelectorStore } from "../tasksSelector";
 
@@ -30,7 +36,7 @@ describe("useTasksStore", () => {
     // vi.mocked(fetchCreateTask).mockClear();
   });
 
-  describe("addTask", () => {
+  describe("add task", () => {
     it("should be add a task", async () => {
       const tasksStore = useTasksStore();
       const tasksSelectorStore = useTasksSelectorStore();
@@ -108,5 +114,74 @@ describe("useTasksStore", () => {
       // 3. 验证返回值
       expect(task).toBeUndefined();
     });
+  });
+
+  it("should be remove task", async () => {
+    const tasksStore = useTasksStore();
+    const tasksSelectorStore = useTasksSelectorStore();
+    tasksSelectorStore.currentSelector = generateListProject();
+
+    const SEARCH_TITLE = "test task";
+    const task = await tasksStore.addTask(SEARCH_TITLE);
+
+    await tasksStore.removeTask(task!);
+    await vi.runAllTimersAsync();
+
+    // 1. 验证行为
+    expect(fetchRemoveTask).toBeCalledWith(task!.id);
+    // 2. 验证数据状态
+    expect(tasksStore.tasks).toHaveLength(0);
+    expect(tasksStore.currentActiveTask).toBeUndefined();
+  });
+
+  it("should be complete task", async () => {
+    const tasksStore = useTasksStore();
+    const tasksSelectorStore = useTasksSelectorStore();
+    tasksSelectorStore.currentSelector = generateListProject();
+
+    const SEARCH_TITLE = "test task";
+    const task = await tasksStore.addTask(SEARCH_TITLE);
+
+    await tasksStore.completeTask(task!);
+    await vi.runAllTimersAsync();
+
+    // 1. 验证行为
+    expect(fetchCompleteTask).toBeCalledWith(task!.id);
+    // 2. 验证数据状态
+    expect(tasksStore.tasks).toHaveLength(0);
+    expect(tasksStore.currentActiveTask).toBeUndefined();
+  });
+
+  it("should be restore task", async () => {
+    const tasksStore = useTasksStore();
+    const tasksSelectorStore = useTasksSelectorStore();
+    tasksSelectorStore.currentSelector = generateListProject();
+
+    const SEARCH_TITLE = "test task";
+    const task = await tasksStore.addTask(SEARCH_TITLE);
+    await tasksStore.restoreTask(task!);
+    await vi.runAllTimersAsync();
+
+    // 1. 验证行为
+    expect(fetchRestoreTask).toBeCalledWith(task!.id);
+    // 2. 验证数据状态
+    expect(tasksStore.tasks).toHaveLength(0);
+  });
+
+  it("should be move task to project", async () => {
+    const tasksStore = useTasksStore();
+    const tasksSelectorStore = useTasksSelectorStore();
+    tasksSelectorStore.currentSelector = generateListProject();
+
+    const SEARCH_TITLE = "test task";
+    const PROJECT_ID = "id1";
+    const task = await tasksStore.addTask(SEARCH_TITLE);
+    await tasksStore.moveTaskToProject(task!, PROJECT_ID);
+    await vi.runAllTimersAsync();
+
+    // 1. 验证行为
+    expect(fetchMoveTaskToProject).toBeCalledWith(task!.id, PROJECT_ID);
+    // 2. 验证数据状态
+    expect(tasksStore.tasks).toHaveLength(0);
   });
 });
