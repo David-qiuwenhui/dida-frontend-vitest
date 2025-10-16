@@ -59,9 +59,11 @@ export const useTasksStore = defineStore("tasksStore", () => {
   function changeActiveTask(taskOrTaskId: Task | Task["id"] | undefined): void {
     let task: Task | undefined;
 
-    if (typeof taskOrTaskId === "string")
+    if (typeof taskOrTaskId === "string") {
       task = tasks.value.find((t) => t.id === taskOrTaskId);
-    else task = taskOrTaskId;
+    } else {
+      task = taskOrTaskId;
+    }
 
     currentActiveTask.value = task;
   }
@@ -145,8 +147,8 @@ export const useTasksStore = defineStore("tasksStore", () => {
     });
 
     return [
-      ...activeTasks.map(mapTaskResponseToTask),
-      ...completedTasks.map(mapTaskResponseToTask),
+      ...(activeTasks?.map(mapTaskResponseToTask) || []),
+      ...(completedTasks?.map(mapTaskResponseToTask) || []),
     ];
   }
 

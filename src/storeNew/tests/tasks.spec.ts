@@ -1,7 +1,8 @@
 import { beforeEach, it, expect, describe, vi } from "vitest";
-import { TaskStatus, useTasksStore } from "../tasks";
+import { Task, TaskStatus, useTasksStore } from "../tasks";
 import { createPinia, setActivePinia } from "pinia";
 import {
+  fetchAllTasks,
   fetchCompleteTask,
   fetchCreateTask,
   fetchMoveTaskToProject,
@@ -11,8 +12,7 @@ import {
 import { generateListProject, generateSmartProject } from "@/tests/fixture";
 import { useTasksSelectorStore } from "../tasksSelector";
 
-vi.mock("@/api");
-vi.mocked(fetchCreateTask).mockImplementation(async (title: string) => {
+const createResponseTask = (title: string) => {
   return {
     title,
     content: "分析用户需求并制定开发计划，包括功能规格说明和技术方案",
@@ -23,7 +23,13 @@ vi.mocked(fetchCreateTask).mockImplementation(async (title: string) => {
     createdAt: "2024-01-15T10:30:00.000Z",
     updatedAt: "2024-01-15T14:20:00.000Z",
   };
+};
+
+vi.mock("@/api");
+vi.mocked(fetchCreateTask).mockImplementation(async (title: string) => {
+  return createResponseTask(title);
 });
+vi.mocked(fetchAllTasks).mockResolvedValue([]);
 
 describe("useTasksStore", () => {
   beforeEach(() => {
@@ -184,4 +190,71 @@ describe("useTasksStore", () => {
     // 2. 验证数据状态
     expect(tasksStore.tasks).toHaveLength(0);
   });
+
+  it("should be update tasks", async () => {
+    const tasksStore = useTasksStore();
+    const task = [createResponseTask("update task")];
+    await tasksStore.updateTasks(task);
+    await vi.runAllTimersAsync();
+
+    // 1. 验证数据状态
+    expect(tasksStore.tasks).toHaveLength(1);
+    expectTaskDataStructure(tasksStore.tasks[0]);
+  });
+
+  describe("changeActiveTask", () => {
+    it("should change active task by id", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      const SEARCH_TITLE = "test task";
+      const task = await tasksStore.addTask(SEARCH_TITLE);
+      await tasksStore.changeActiveTask(task!.id);
+      await vi.runAllTimersAsync();
+
+      expect(tasksStore.currentActiveTask).toEqual(task);
+    });
+
+    it("should change active task by task", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      const SEARCH_TITLE = "test task";
+      const task = await tasksStore.addTask(SEARCH_TITLE);
+      await tasksStore.changeActiveTask(task!);
+      await vi.runAllTimersAsync();
+
+      expect(tasksStore.currentActiveTask).toEqual(task);
+    });
+  });
+
+  it("should find all task not remove", async () => {
+    const tasksStore = useTasksStore();
+    const tasksSelectorStore = useTasksSelectorStore();
+    tasksSelectorStore.currentSelector = generateListProject();
+    const SEARCH_TITLE = "test task";
+    const task = await tasksStore.addTask(SEARCH_TITLE);
+
+    const allTasks = await tasksStore.findAllTasksNotRemoved();
+    vi.runAllTimersAsync();
+
+    expect(fetchAllTasks).toBeCalledTimes(2);
+    expect(fetchAllTasks).toBeCalledWith({
+      status: TaskStatus.ACTIVE,
+    });
+    expect(fetchAllTasks).toBeCalledWith({
+      status: TaskStatus.COMPLETED,
+    });
+  });
 });
+
+function expectTaskDataStructure(task: Task) {
+  expect(task).toHaveProperty("id");
+  expect(task).toHaveProperty("title");
+  expect(task).toHaveProperty("content");
+  expect(task).toHaveProperty("status");
+  expect(task).toHaveProperty("projectId");
+  expect(task).toHaveProperty("position");
+}
