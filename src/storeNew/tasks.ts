@@ -84,15 +84,33 @@ export const useTasksStore = defineStore("tasksStore", () => {
 
   async function cancelCompleteTask(task: Task) {
     function taskPositionRestorer(task: Task) {
+      // only one task
+      if (tasks?.value?.length === 0) {
+        tasks.value.push(task);
+        return;
+      }
+
+      // add to first position
+      const firstTask = tasks.value[0];
+      if (task.position > firstTask.position) {
+        tasks.value.unshift(task);
+        return;
+      }
+
+      // add to last position
       const lastTask = tasks.value[tasks.value.length - 1];
       if (task.position < lastTask.position) {
         tasks.value.push(task);
         return;
       }
 
+      // add to middle position
+      const restoreTaskPosition = task.position;
       for (let i = 0; i < tasks.value.length; i++) {
-        if (task.position > tasks.value[i].position) {
-          const currentIndex = tasks.value.indexOf(tasks.value[i]);
+        const currentTask = tasks.value[i];
+        const currentPosition = currentTask.position;
+        if (restoreTaskPosition > currentPosition) {
+          const currentIndex = tasks.value.indexOf(currentTask);
           tasks.value.splice(currentIndex, 0, task);
           return;
         }

@@ -12,14 +12,16 @@ import {
 import { generateListProject, generateSmartProject } from "@/tests/fixture";
 import { useTasksSelectorStore } from "../tasksSelector";
 
+let id = 0;
+let position = 0;
 const createResponseTask = (title: string) => {
   return {
     title,
     content: "分析用户需求并制定开发计划，包括功能规格说明和技术方案",
     status: TaskStatus.ACTIVE,
     projectId: "project_work_001",
-    position: 1,
-    _id: "task_001",
+    position: position++,
+    _id: `task_${id++}`,
     createdAt: "2024-01-15T10:30:00.000Z",
     updatedAt: "2024-01-15T14:20:00.000Z",
   };
@@ -38,6 +40,8 @@ describe("useTasksStore", () => {
     setActivePinia(createPinia());
 
     // 清空数据状态
+    id = 0;
+    position = 0;
     vi.clearAllMocks();
     // vi.mocked(fetchCreateTask).mockClear();
   });
@@ -248,8 +252,108 @@ describe("useTasksStore", () => {
       status: TaskStatus.COMPLETED,
     });
   });
+
+  describe("cancel complete task", () => {
+    it("should be cancel complete task", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      await tasksStore.addTask("task0");
+      const task = await tasksStore.addTask("task1");
+      await tasksStore.addTask("task2");
+
+      // complete task
+      await tasksStore.completeTask(task!);
+      // cancel complete task
+      await tasksStore.cancelCompleteTask(task!);
+      await vi.runAllTimersAsync();
+
+      // 1. 验证行为
+      expect(fetchRestoreTask).toBeCalledWith(task!.id);
+
+      // 2. 验证数据状态
+      expect(tasksStore.tasks).toHaveLength(3);
+      expect(tasksStore.tasks[1]).toEqual(task);
+    });
+
+    it("should be cancel complete the first task", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      await tasksStore.addTask("task0");
+      await tasksStore.addTask("task1");
+      const task = await tasksStore.addTask("task2");
+
+      // complete task
+      await tasksStore.completeTask(task!);
+      // cancel complete task
+      await tasksStore.cancelCompleteTask(task!);
+      await vi.runAllTimersAsync();
+
+      // 1. 验证行为
+      expect(fetchRestoreTask).toBeCalledWith(task!.id);
+
+      // 2. 验证数据状态
+      expect(tasksStore.tasks).toHaveLength(3);
+      expect(tasksStore.tasks[0]).toEqual(task);
+      expect(tasksStore.tasks[0].status).toEqual(TaskStatus.ACTIVE);
+    });
+
+    it("should be cancel complete the last task", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const task = await tasksStore.addTask("task0");
+      await tasksStore.addTask("task1");
+      await tasksStore.addTask("task2");
+
+      // complete task
+      await tasksStore.completeTask(task!);
+      // cancel complete task
+      await tasksStore.cancelCompleteTask(task!);
+      await vi.runAllTimersAsync();
+
+      // 1. 验证行为
+      expect(fetchRestoreTask).toBeCalledWith(task!.id);
+
+      // 2. 验证数据状态
+      expect(tasksStore.tasks).toHaveLength(3);
+      expect(tasksStore.tasks[2]).toEqual(task);
+      expect(tasksStore.tasks[2].status).toEqual(TaskStatus.ACTIVE);
+    });
+
+    it("should be cancel complete the only one task", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const task = await tasksStore.addTask("task0");
+
+      // complete task
+      await tasksStore.completeTask(task!);
+      // cancel complete task
+      await tasksStore.cancelCompleteTask(task!);
+      await vi.runAllTimersAsync();
+
+      // 1. 验证行为
+      expect(fetchRestoreTask).toBeCalledWith(task!.id);
+
+      // 2. 验证数据状态
+      expect(tasksStore.tasks).toHaveLength(1);
+      expect(tasksStore.tasks[0]).toEqual(task);
+      expect(tasksStore.tasks[0].status).toEqual(TaskStatus.ACTIVE);
+    });
+  });
 });
 
+// 验证Task的数据结构
 function expectTaskDataStructure(task: Task) {
   expect(task).toHaveProperty("id");
   expect(task).toHaveProperty("title");
