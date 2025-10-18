@@ -8,6 +8,10 @@ import {
   fetchMoveTaskToProject,
   fetchRemoveTask,
   fetchRestoreTask,
+  fetchUpdateTaskContent,
+  fetchUpdateTaskPosition,
+  fetchUpdateTaskProperties,
+  fetchUpdateTaskTitle,
 } from "@/api";
 import { generateListProject, generateSmartProject } from "@/tests/fixture";
 import { useTasksSelectorStore } from "../tasksSelector";
@@ -17,7 +21,7 @@ let position = 0;
 const createResponseTask = (title: string) => {
   return {
     title,
-    content: "分析用户需求并制定开发计划，包括功能规格说明和技术方案",
+    content: `${title} content`,
     status: TaskStatus.ACTIVE,
     projectId: "project_work_001",
     position: position++,
@@ -349,6 +353,154 @@ describe("useTasksStore", () => {
       expect(tasksStore.tasks).toHaveLength(1);
       expect(tasksStore.tasks[0]).toEqual(task);
       expect(tasksStore.tasks[0].status).toEqual(TaskStatus.ACTIVE);
+    });
+  });
+
+  describe("update task title", () => {
+    it("should update task title", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const newTitle = "task two";
+      const task = await tasksStore.addTask(originTitle);
+      await tasksStore.updateTaskTitle(task!, newTitle);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskTitle).toBeCalledWith(task!.id, newTitle);
+      // 2. 状态验证
+      expect(task!.title).toEqual(newTitle);
+    });
+
+    it("should not update task title when title not change", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+      await tasksStore.updateTaskTitle(task!, originTitle);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskTitle).not.toHaveBeenCalled();
+      // 2. 状态验证
+      expect(task!.title).toEqual(originTitle);
+    });
+  });
+
+  describe("update task content", () => {
+    it("should update task content", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+      const newContent = "task one new content";
+      await tasksStore.updateTaskContent(task!, newContent);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskContent).toBeCalledWith(task!.id, newContent);
+      // 2. 状态验证
+      expect(task!.content).toEqual(newContent);
+    });
+
+    it("should not update task content when content not change", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+      const originContent = "task one content";
+      await tasksStore.updateTaskContent(task!, originContent);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskContent).not.toHaveBeenCalled();
+      // 2. 状态验证
+      expect(task!.content).toEqual(originContent);
+    });
+  });
+
+  describe("update task position", () => {
+    it("should update task position", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+      const newPosition = 100;
+      await tasksStore.updateTaskPosition(task!, newPosition);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskPosition).toBeCalledWith(task!.id, newPosition);
+      // 2. 状态验证
+      expect(task!.position).toEqual(newPosition);
+    });
+
+    it("should not update task position when position not change", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      // add task
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+      const originPosition = task!.position;
+      await tasksStore.updateTaskPosition(task!, originPosition);
+
+      // 1. 行为验证
+      expect(fetchUpdateTaskPosition).not.toHaveBeenCalled();
+      // 2. 状态验证
+      expect(task!.position).toEqual(originPosition);
+    });
+  });
+
+  describe("update task any properties", () => {
+    it("should update task any properties", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+
+      const updateProperties = {
+        title: "task two",
+      };
+      await tasksStore.updateTaskProperties(task!, updateProperties);
+
+      expect(fetchUpdateTaskProperties).toHaveBeenCalledWith(
+        task!.id,
+        updateProperties
+      );
+      expect(tasksStore.tasks[0].title).toEqual("task two");
+    });
+
+    it("should update task multi properties", async () => {
+      const tasksStore = useTasksStore();
+      const tasksSelectorStore = useTasksSelectorStore();
+      tasksSelectorStore.currentSelector = generateListProject();
+
+      const originTitle = "task one";
+      const task = await tasksStore.addTask(originTitle);
+
+      const updateProperties = {
+        title: "task two",
+        content: "task two content",
+      };
+      await tasksStore.updateTaskProperties(task!, updateProperties);
+
+      expect(fetchUpdateTaskProperties).toBeCalledTimes(2);
+      expect(tasksStore.tasks[0].title).toEqual("task two");
+      expect(tasksStore.tasks[0].content).toEqual("task two content");
     });
   });
 });

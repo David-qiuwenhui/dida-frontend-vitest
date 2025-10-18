@@ -9,6 +9,7 @@ import {
   fetchRestoreTask,
   fetchUpdateTaskContent,
   fetchUpdateTaskPosition,
+  fetchUpdateTaskProperties,
   fetchUpdateTaskTitle,
 } from "@/api";
 import { useTasksSelectorStore } from "@/storeNew";
@@ -154,6 +155,25 @@ export const useTasksStore = defineStore("tasksStore", () => {
     task.position = newPosition;
   }
 
+  async function updateTaskProperties(
+    task: Task,
+    updateProperties: Partial<Task>
+  ) {
+    let property: keyof Task;
+    for (property in updateProperties) {
+      if (!Object.hasOwn(updateProperties, property)) continue;
+
+      const oldValue = task[property];
+      const newValue = updateProperties[property];
+      if (oldValue === newValue) {
+        continue;
+      }
+
+      await fetchUpdateTaskProperties(task.id, { [property]: newValue });
+      Reflect.set(task, property, newValue);
+    }
+  }
+
   /**
    * 查找所有未被删除的任务（包括活跃任务和已完成任务）
    * @returns 未被删除的任务数组
@@ -191,6 +211,7 @@ export const useTasksStore = defineStore("tasksStore", () => {
     updateTaskTitle,
     updateTaskContent,
     updateTaskPosition,
+    updateTaskProperties,
     findAllTasksNotRemoved,
   };
 });

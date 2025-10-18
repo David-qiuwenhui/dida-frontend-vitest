@@ -67,3 +67,9 @@ export function fetchUpdateTaskPosition(taskId: Task["id"], position: number) {
     position,
   });
 }
+
+// 更新task的指定属性
+export function fetchUpdateTaskProperties(
+  taskId: Task["id"],
+  updateProperties: Partial<Task>
+) {}
