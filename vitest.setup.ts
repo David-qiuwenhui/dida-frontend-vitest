@@ -5,6 +5,8 @@ import {
   VueRouterMock,
 } from "vue-router-mock";
 import { config } from "@vue/test-utils";
+// 解决 indexeddb 报错问题
+import "fake-indexeddb/auto";
 
 /**
  * 初始化配置 Vue Router 模拟

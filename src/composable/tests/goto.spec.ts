@@ -1,6 +1,5 @@
 import { it, expect, describe, vi } from "vitest";
 import { GITHUB_URL, openGithub, useGoto } from "../../composable";
-
 import { useSetup } from "@/tests/helpers";
 import { RouteNames } from "@/router/constant";
 

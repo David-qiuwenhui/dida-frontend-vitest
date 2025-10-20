@@ -9,7 +9,7 @@ export function messageError(message: string) {
 }
 
 // 重定向到登录页
-export function messageRedirectToSignIn(callback: () => void | undefined) {
+export function messageRedirectToSignIn(callback?: () => void) {
   callback && callback();
   messageError("登录过期，请重新登录");
 }
