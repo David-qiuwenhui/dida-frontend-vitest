@@ -1,9 +1,4 @@
-import type {
-  AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse,
-} from "axios";
+import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import axios from "axios";
 import { checkHaveToken, getToken } from "../utils/token";
 import {
@@ -19,7 +14,7 @@ export const http: AxiosInstance = axios.create({
 });
 
 // 请求拦截器处理逻辑
-const requestHandler = (config: AxiosRequestConfig): AxiosRequestConfig => {
+const requestHandler = (config: { headers: any }) => {
   console.log("________request________");
   if (checkHaveToken()) {
     config.headers!.Authorization = `Bearer ${getToken()}`;
