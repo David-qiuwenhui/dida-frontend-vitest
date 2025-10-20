@@ -1,3 +1,5 @@
+export * from "./token";
+
 /**
  * 延迟等待函数
  * @param ms 延迟时间，默认 1000 毫秒

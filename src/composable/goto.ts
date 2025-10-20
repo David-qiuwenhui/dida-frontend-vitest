@@ -21,9 +21,16 @@ export function useGoto() {
     });
   }
 
+  function goToLogin() {
+    router.push({
+      name: RouteNames.LOGIN,
+    });
+  }
+
   return {
     goToHome,
     goToSetting,
+    goToLogin,
   };
 }
 
@@ -34,3 +41,10 @@ export const GITHUB_URL = "https://github.com/cuixueshe/dida";
 export function openGithub() {
   window.open(GITHUB_URL);
 }
+
+export const goToLoginHandler = () => {
+  const router = useRouter();
+  router.push({
+    name: RouteNames.LOGIN,
+  });
+};
