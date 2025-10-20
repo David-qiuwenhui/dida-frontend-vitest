@@ -15,7 +15,7 @@ export const http: AxiosInstance = axios.create({
 
 // 请求拦截器处理逻辑
 const requestHandler = (config: { headers: any }) => {
-  console.log("________request________");
+  // console.log("________request________");
   if (checkHaveToken()) {
     config.headers!.Authorization = `Bearer ${getToken()}`;
   }
@@ -25,7 +25,7 @@ const requestHandler = (config: { headers: any }) => {
 
 // 响应拦截器处理逻辑
 const responseHandler = (response: AxiosResponse) => {
-  console.log("________response________");
+  // console.log("________response________");
   const { code, message, data } = response.data;
   if (code === 0) {
     return data;
@@ -37,9 +37,8 @@ const responseHandler = (response: AxiosResponse) => {
 
 // 响应拦截器错误场景处理逻辑
 const responseErrorHandler = (error: AxiosError) => {
-  console.log("________error________");
+  // console.log("________error________");
   const { status } = error.response || {};
-  console.log("status", status);
 
   if (status) {
     switch (status) {

@@ -33,19 +33,14 @@ export const routes: RouteRecordRaw[] = [
 
 export const setupRouterGuard = (router: Router) => {
   router.beforeEach(() => {
-    console.log("______________beforeEach______________");
     startLoading();
   });
   router.afterEach(() => {
-    console.log("______________afterEach______________");
     finishLoading();
   });
 
   // TODO: 判断该路由是否需要登录权限
   router.beforeEach((to, from, next) => {
-    console.log("______________beforeEach______________");
-    console.log(to.matched.some((record) => record.meta.requireAuth));
-
     if (to.matched.some((record) => record.meta.requireAuth)) {
       // 需要权限验证, 检查是否有token
       if (checkHaveToken()) {

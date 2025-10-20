@@ -1,31 +1,20 @@
-import { it, expect, describe, vi, beforeEach } from "vitest";
-import { createRouterMock, RouterMock } from "vue-router-mock";
-import { routes, setupRouterGuard } from "..";
+import { it, expect, describe, beforeEach } from "vitest";
+import { RouterMock } from "vue-router-mock";
+import { routes } from "..";
 import { RouteNames } from "../constant";
 import { cleanToken, setToken } from "@/utils";
-
-const setupRouter = () => {
-  const router = createRouterMock({
-    spy: {
-      create: (fn) => vi.fn(fn),
-      reset: (spy) => spy.mockClear(),
-    },
-    routes: routes,
-    // 允许使用真正的导航守卫
-    useRealNavigation: true,
-  });
-
-  // 配置路由守卫
-  setupRouterGuard(router);
-
-  return router;
-};
+import { useSetupRouter } from "@/tests/helpers";
 
 describe("The Router", () => {
   let router: RouterMock;
   beforeEach(() => {
     cleanToken();
-    router = setupRouter();
+    router = useSetupRouter({
+      // 配置路由
+      routes: routes,
+      // 允许使用真正的导航守卫
+      useRealNavigation: true,
+    });
   });
 
   describe("need requires auth", () => {

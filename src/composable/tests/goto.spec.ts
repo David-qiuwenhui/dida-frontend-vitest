@@ -1,7 +1,13 @@
 import { it, expect, describe, vi } from "vitest";
-import { GITHUB_URL, openGithub, useGoto } from "../../composable";
-import { useSetup } from "@/tests/helpers";
+import {
+  GITHUB_URL,
+  goToLoginHandler,
+  openGithub,
+  useGoto,
+} from "../../composable";
+import { useSetup, useSetupRouter } from "@/tests/helpers";
 import { RouteNames } from "@/router/constant";
+import { routes } from "@/router";
 
 describe("The Header", () => {
   it("should be go to home page", () => {
@@ -28,5 +34,25 @@ describe("The Header", () => {
     openGithub();
 
     expect(windowViFn).toBeCalledWith(GITHUB_URL);
+  });
+
+  // 行为验证
+  it("should be go to login page", async () => {
+    const router = useSetupRouter();
+
+    await goToLoginHandler();
+
+    expect(router.replace).toBeCalledWith({
+      name: RouteNames.LOGIN,
+    });
+  });
+
+  // 状态验证
+  it("should be go to login page", async () => {
+    const router = useSetupRouter({ routes });
+
+    await goToLoginHandler();
+
+    expect(router.currentRoute.value.name).toBe(RouteNames.LOGIN);
   });
 });

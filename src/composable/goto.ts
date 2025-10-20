@@ -1,3 +1,4 @@
+import { getRouterInstance } from "@/router";
 import { RouteNames } from "@/router/constant";
 import { useRouter } from "vue-router";
 
@@ -43,8 +44,8 @@ export function openGithub() {
 }
 
 export const goToLoginHandler = () => {
-  const router = useRouter();
-  router.push({
+  const router = getRouterInstance();
+  return router.replace({
     name: RouteNames.LOGIN,
   });
 };
