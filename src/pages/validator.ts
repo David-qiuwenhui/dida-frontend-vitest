@@ -14,6 +14,9 @@ export const validatorPasswordSame = (password: string, value: string) => {
  * @returns 是否符合长度要求
  */
 export const validatorUsernameLength = (username: string) => {
+  if (typeof username !== "string") {
+    return false;
+  }
   return username.length >= 4 && username.length <= 20;
 };
 
@@ -23,5 +26,13 @@ export const validatorUsernameLength = (username: string) => {
  * @returns 是否符合长度要求
  */
 export const validatorPasswordLength = (password: string) => {
+  if (password === null || password === undefined) {
+    return false;
+  }
+
+  if (typeof password !== "string") {
+    return false;
+  }
+
   return password.length >= 6 && password.length <= 30;
 };
